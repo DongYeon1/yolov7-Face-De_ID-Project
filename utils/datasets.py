@@ -346,8 +346,28 @@ class LoadStreams:  # multiple IP or RTSP cameras
 
 def img2label_paths(img_paths):
     # Define label paths as a function of image paths
-    sa, sb = os.sep + 'images' + os.sep, os.sep + 'labels' + os.sep  # /images/, /labels/ substrings
-    return ['txt'.join(x.replace(sa, sb, 1).rsplit(x.split('.')[-1], 1)) for x in img_paths]
+#    sa, sb = os.sep + 'images' + os.sep, os.sep + 'labels' + os.sep  # /images/, /labels/ substrings
+#    return ['txt'.join(x.replace(sa, sb, 1).rsplit(x.split('.')[-1], 1)) for x in img_paths]
+    # /mnt/development/ML_team/facial_img_json/img/*.jpg
+    # /root/home/development/users/dongyeon/datamaker/final_yolov7/coco/labels/train
+    image_path = '/mnt/development/ML_team/facial_img_json/img'.replace('/', os.sep)
+    train_label_path = '/root/home/development/users/dongyeon/datamaker/final_yolov7/coco/labels/train'.replace('/', os.sep)
+    val_label_path = '/root/home/development/users/dongyeon/datamaker/final_yolov7/coco/labels/val'.replace('/', os.sep)
+
+    result = []
+
+    for i in img_paths:
+        train_label_file = i.replace(image_path, train_label_path).replace('.jpg', '.txt')
+        val_label_file = i.replace(image_path, val_label_path).replace('.jpg', '.txt')
+
+        if os.path.exists(train_label_file):
+            result.append(train_label_file)
+        elif os.path.exists(val_label_file):
+            result.append(val_label_file)
+        else:
+            continue
+
+    return result
 
 
 class LoadImagesAndLabels(Dataset):  # for training/testing
